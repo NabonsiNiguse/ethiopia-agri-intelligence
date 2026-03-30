@@ -12,7 +12,8 @@ import {
   Map, 
   Cpu,
   BookOpen,
-  GraduationCap
+  GraduationCap,
+  BarChart3
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -21,6 +22,9 @@ const NAV_ITEMS = [
   { href: "/disease", label: "Disease Detection", icon: Leaf, tier: "core" },
   { href: "/weather", label: "Weather Advisory", icon: CloudSun, tier: "core" },
   { href: "/market", label: "Market Intel", icon: TrendingUp, tier: "core" },
+  { href: "/decisions", label: "Decision Engine", icon: Cpu, tier: "core" },
+  { href: "/risk-map", label: "Risk Map", icon: Map, tier: "core" },
+  { href: "/impact", label: "Impact Dashboard", icon: BarChart3, tier: "core" },
   { href: "/grading", label: "Crop Grading", icon: CheckCircle, tier: "advanced" },
   { href: "/logistics", label: "Tractor Hub", icon: Truck, tier: "advanced" },
   { href: "/forum", label: "Farmer Forum", icon: Users, tier: "advanced" },

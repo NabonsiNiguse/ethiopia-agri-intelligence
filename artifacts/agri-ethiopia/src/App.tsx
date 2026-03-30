@@ -10,6 +10,9 @@ import Advisory from "@/pages/advisory";
 import Disease from "@/pages/disease";
 import Weather from "@/pages/weather";
 import Market from "@/pages/market";
+import Decisions from "@/pages/decisions";
+import RiskMap from "@/pages/riskmap";
+import Impact from "@/pages/impact";
 import Grading from "@/pages/grading";
 import Logistics from "@/pages/logistics";
 import Forum from "@/pages/forum";
@@ -30,6 +33,9 @@ function Router() {
         <Route path="/disease" component={Disease} />
         <Route path="/weather" component={Weather} />
         <Route path="/market" component={Market} />
+        <Route path="/decisions" component={Decisions} />
+        <Route path="/risk-map" component={RiskMap} />
+        <Route path="/impact" component={Impact} />
         <Route path="/grading" component={Grading} />
         <Route path="/logistics" component={Logistics} />
         <Route path="/forum" component={Forum} />

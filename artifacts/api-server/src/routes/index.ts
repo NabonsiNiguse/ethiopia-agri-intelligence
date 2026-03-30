@@ -12,6 +12,9 @@ import traceabilityRouter from "./traceability";
 import insuranceRouter from "./insurance";
 import ussdRouter from "./ussd";
 import dashboardRouter from "./dashboard";
+import decisionsRouter from "./decisions";
+import riskmapRouter from "./riskmap";
+import impactRouter from "./impact";
 
 const router: IRouter = Router();
 
@@ -28,5 +31,8 @@ router.use(traceabilityRouter);
 router.use(insuranceRouter);
 router.use(ussdRouter);
 router.use(dashboardRouter);
+router.use(decisionsRouter);
+router.use(riskmapRouter);
+router.use(impactRouter);
 
 export default router;
