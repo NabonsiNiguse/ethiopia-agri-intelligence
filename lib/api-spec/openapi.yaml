@@ -1,22 +1,47 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 1.0.0
+  description: AI-Powered Smart Agriculture Advisory and Market Intelligence System for Ethiopia
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication and user management
+  - name: farmers
+    description: Farmer profiles and management
+  - name: advisory
+    description: AI farming advisor chat
+  - name: disease
+    description: Crop disease detection
+  - name: weather
+    description: Weather prediction and advisory
+  - name: market
+    description: Market price aggregation
+  - name: grading
+    description: AI crop quality grading
+  - name: logistics
+    description: Smart logistics (tractor sharing)
+  - name: forum
+    description: Farmer-to-farmer communication
+  - name: traceability
+    description: Blockchain-based crop traceability
+  - name: insurance
+    description: Micro-insurance management
+  - name: ussd
+    description: USSD service integration
+  - name: dashboard
+    description: Dashboard summaries and analytics
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +49,725 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /farmers:
+    get:
+      operationId: listFarmers
+      tags: [farmers]
+      summary: List all farmers
+      parameters:
+        - in: query
+          name: region
+          schema:
+            type: string
+        - in: query
+          name: cropType
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: List of farmers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FarmerListResponse"
+    post:
+      operationId: createFarmer
+      tags: [farmers]
+      summary: Create farmer profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFarmerRequest"
+      responses:
+        "201":
+          description: Farmer created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Farmer"
+
+  /farmers/{id}:
+    get:
+      operationId: getFarmer
+      tags: [farmers]
+      summary: Get farmer by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Farmer details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Farmer"
+
+  /advisory/chat:
+    post:
+      operationId: sendAdvisoryMessage
+      tags: [advisory]
+      summary: Send message to AI farming advisor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdvisoryMessageRequest"
+      responses:
+        "200":
+          description: AI advisor response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdvisoryResponse"
+
+  /advisory/sessions:
+    get:
+      operationId: listAdvisorySessions
+      tags: [advisory]
+      summary: List advisory chat sessions
+      parameters:
+        - in: query
+          name: farmerId
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of advisory sessions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdvisorySessionList"
+
+  /disease/detect:
+    post:
+      operationId: detectCropDisease
+      tags: [disease]
+      summary: Detect crop disease from image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DiseaseDetectionRequest"
+      responses:
+        "200":
+          description: Disease detection result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiseaseDetectionResult"
+
+  /disease/history:
+    get:
+      operationId: getDiseaseHistory
+      tags: [disease]
+      summary: Get disease detection history
+      parameters:
+        - in: query
+          name: farmerId
+          schema:
+            type: integer
+        - in: query
+          name: cropType
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Disease history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiseaseHistoryList"
+
+  /weather/forecast:
+    get:
+      operationId: getWeatherForecast
+      tags: [weather]
+      summary: Get weather forecast and advisory
+      parameters:
+        - in: query
+          name: region
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: days
+          schema:
+            type: integer
+            default: 7
+      responses:
+        "200":
+          description: Weather forecast with advisory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeatherForecastResponse"
+
+  /weather/advisory:
+    get:
+      operationId: getWeatherAdvisory
+      tags: [weather]
+      summary: Get smart weather-based farming advisory
+      parameters:
+        - in: query
+          name: region
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: cropType
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Smart weather advisory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeatherAdvisoryResponse"
+
+  /market/prices:
+    get:
+      operationId: getMarketPrices
+      tags: [market]
+      summary: Get current market prices
+      parameters:
+        - in: query
+          name: commodity
+          schema:
+            type: string
+        - in: query
+          name: region
+          schema:
+            type: string
+        - in: query
+          name: date
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Market price data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketPriceList"
+    post:
+      operationId: submitMarketPrice
+      tags: [market]
+      summary: Submit market price report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarketPriceSubmit"
+      responses:
+        "201":
+          description: Price report submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketPrice"
+
+  /market/trends:
+    get:
+      operationId: getMarketTrends
+      tags: [market]
+      summary: Get market price trends and predictions
+      parameters:
+        - in: query
+          name: commodity
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: period
+          schema:
+            type: string
+            enum: [week, month, quarter, year]
+            default: month
+      responses:
+        "200":
+          description: Market trends data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketTrendsResponse"
+
+  /grading/analyze:
+    post:
+      operationId: gradecropQuality
+      tags: [grading]
+      summary: AI crop quality grading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GradingRequest"
+      responses:
+        "200":
+          description: Grading result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GradingResult"
+
+  /grading/records:
+    get:
+      operationId: listGradingRecords
+      tags: [grading]
+      summary: List grading records
+      parameters:
+        - in: query
+          name: farmerId
+          schema:
+            type: integer
+        - in: query
+          name: cropType
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of grading records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GradingRecordList"
+
+  /logistics/tractors:
+    get:
+      operationId: listTractors
+      tags: [logistics]
+      summary: List available tractors for hire
+      parameters:
+        - in: query
+          name: region
+          schema:
+            type: string
+        - in: query
+          name: available
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Available tractors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TractorList"
+    post:
+      operationId: registerTractor
+      tags: [logistics]
+      summary: Register a tractor for hire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterTractorRequest"
+      responses:
+        "201":
+          description: Tractor registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tractor"
+
+  /logistics/bookings:
+    get:
+      operationId: listBookings
+      tags: [logistics]
+      summary: List tractor bookings
+      parameters:
+        - in: query
+          name: farmerId
+          schema:
+            type: integer
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, confirmed, completed, cancelled]
+      responses:
+        "200":
+          description: Booking list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingList"
+    post:
+      operationId: createBooking
+      tags: [logistics]
+      summary: Book a tractor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookingRequest"
+      responses:
+        "201":
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+  /forum/posts:
+    get:
+      operationId: listForumPosts
+      tags: [forum]
+      summary: List forum posts
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: language
+          schema:
+            type: string
+            enum: [en, am, om]
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Forum posts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForumPostList"
+    post:
+      operationId: createForumPost
+      tags: [forum]
+      summary: Create forum post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateForumPostRequest"
+      responses:
+        "201":
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForumPost"
+
+  /forum/posts/{id}/replies:
+    get:
+      operationId: getPostReplies
+      tags: [forum]
+      summary: Get replies to a post
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Post replies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForumReplyList"
+    post:
+      operationId: addReply
+      tags: [forum]
+      summary: Add reply to post
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReplyRequest"
+      responses:
+        "201":
+          description: Reply added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForumReply"
+
+  /traceability/batches:
+    get:
+      operationId: listCropBatches
+      tags: [traceability]
+      summary: List crop batches with traceability data
+      parameters:
+        - in: query
+          name: farmerId
+          schema:
+            type: integer
+        - in: query
+          name: cropType
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Crop batch list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CropBatchList"
+    post:
+      operationId: createCropBatch
+      tags: [traceability]
+      summary: Create new crop batch record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCropBatchRequest"
+      responses:
+        "201":
+          description: Batch created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CropBatch"
+
+  /traceability/batches/{id}/trace:
+    get:
+      operationId: traceCropBatch
+      tags: [traceability]
+      summary: Get full supply chain trace for a batch
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Supply chain trace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplyChainTrace"
+
+  /insurance/policies:
+    get:
+      operationId: listInsurancePolicies
+      tags: [insurance]
+      summary: List insurance policies
+      parameters:
+        - in: query
+          name: farmerId
+          schema:
+            type: integer
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [active, expired, claimed]
+      responses:
+        "200":
+          description: Insurance policies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InsurancePolicyList"
+    post:
+      operationId: createInsurancePolicy
+      tags: [insurance]
+      summary: Create micro-insurance policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInsurancePolicyRequest"
+      responses:
+        "201":
+          description: Policy created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InsurancePolicy"
+
+  /insurance/claims:
+    get:
+      operationId: listInsuranceClaims
+      tags: [insurance]
+      summary: List insurance claims
+      parameters:
+        - in: query
+          name: farmerId
+          schema:
+            type: integer
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, approved, paid, rejected]
+      responses:
+        "200":
+          description: Insurance claims
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InsuranceClaimList"
+
+  /ussd/session:
+    post:
+      operationId: handleUssdSession
+      tags: [ussd]
+      summary: Handle USSD session request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UssdRequest"
+      responses:
+        "200":
+          description: USSD response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UssdResponse"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get overall platform dashboard summary
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/regional-stats:
+    get:
+      operationId: getRegionalStats
+      tags: [dashboard]
+      summary: Get regional farming statistics
+      parameters:
+        - in: query
+          name: region
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Regional stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegionalStatsResponse"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Get recent platform activity
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Recent activity feed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecentActivityList"
+
+  /dashboard/crop-calendar:
+    get:
+      operationId: getCropCalendar
+      tags: [dashboard]
+      summary: Get crop planting and harvest calendar
+      parameters:
+        - in: query
+          name: region
+          schema:
+            type: string
+        - in: query
+          name: month
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Crop calendar data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CropCalendarResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +775,1149 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    LoginRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        password:
+          type: string
+        language:
+          type: string
+          enum: [en, am, om]
+          default: en
+      required: [phone, password]
+
+    RegisterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [farmer, expert, admin, government]
+          default: farmer
+        region:
+          type: string
+        language:
+          type: string
+          enum: [en, am, om]
+          default: en
+      required: [name, phone, password, role, region]
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+      required: [token, user]
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+          enum: [farmer, expert, admin, government]
+        region:
+          type: string
+        language:
+          type: string
+        createdAt:
+          type: string
+      required: [id, name, phone, role, region, language, createdAt]
+
+    Farmer:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: string
+        region:
+          type: string
+        woreda:
+          type: string
+        zone:
+          type: string
+        landSizeHectares:
+          type: number
+        primaryCrops:
+          type: array
+          items:
+            type: string
+        preferredLanguage:
+          type: string
+          enum: [en, am, om]
+        hasSmartphone:
+          type: boolean
+        gpsLat:
+          type: number
+        gpsLng:
+          type: number
+        registeredAt:
+          type: string
+        totalAdvisories:
+          type: integer
+        totalDetections:
+          type: integer
+      required: [id, userId, name, phone, region, primaryCrops, preferredLanguage, hasSmartphone, registeredAt]
+
+    FarmerListResponse:
+      type: object
+      properties:
+        farmers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Farmer"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [farmers, total, page, limit]
+
+    CreateFarmerRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        region:
+          type: string
+        woreda:
+          type: string
+        zone:
+          type: string
+        landSizeHectares:
+          type: number
+        primaryCrops:
+          type: array
+          items:
+            type: string
+        preferredLanguage:
+          type: string
+          enum: [en, am, om]
+        hasSmartphone:
+          type: boolean
+        gpsLat:
+          type: number
+        gpsLng:
+          type: number
+      required: [name, phone, region, primaryCrops, preferredLanguage]
+
+    AdvisoryMessageRequest:
+      type: object
+      properties:
+        farmerId:
+          type: integer
+        sessionId:
+          type: string
+        message:
+          type: string
+        language:
+          type: string
+          enum: [en, am, om]
+          default: en
+        cropContext:
+          type: string
+        voiceInput:
+          type: boolean
+          default: false
+      required: [farmerId, message, language]
+
+    AdvisoryResponse:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        response:
+          type: string
+        responseAmharic:
+          type: string
+        responseOromo:
+          type: string
+        recommendations:
+          type: array
+          items:
+            type: string
+        relatedTopics:
+          type: array
+          items:
+            type: string
+        expertValidated:
+          type: boolean
+        confidence:
+          type: number
+        timestamp:
+          type: string
+      required: [sessionId, response, recommendations, expertValidated, confidence, timestamp]
+
+    AdvisorySession:
+      type: object
+      properties:
+        id:
+          type: string
+        farmerId:
+          type: integer
+        farmerName:
+          type: string
+        startedAt:
+          type: string
+        lastMessageAt:
+          type: string
+        messageCount:
+          type: integer
+        primaryTopic:
+          type: string
+      required: [id, farmerId, farmerName, startedAt, lastMessageAt, messageCount, primaryTopic]
+
+    AdvisorySessionList:
+      type: object
+      properties:
+        sessions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdvisorySession"
+        total:
+          type: integer
+      required: [sessions, total]
+
+    DiseaseDetectionRequest:
+      type: object
+      properties:
+        farmerId:
+          type: integer
+        cropType:
+          type: string
+        imageBase64:
+          type: string
+        imageUrl:
+          type: string
+        capturedAt:
+          type: string
+        gpsLat:
+          type: number
+        gpsLng:
+          type: number
+      required: [farmerId, cropType]
+
+    DiseaseDetectionResult:
+      type: object
+      properties:
+        id:
+          type: integer
+        farmerId:
+          type: integer
+        cropType:
+          type: string
+        diseaseName:
+          type: string
+        diseaseNameAmharic:
+          type: string
+        diseaseNameOromo:
+          type: string
+        confidence:
+          type: number
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+        treatment:
+          type: array
+          items:
+            type: string
+        treatmentAmharic:
+          type: array
+          items:
+            type: string
+        preventionTips:
+          type: array
+          items:
+            type: string
+        detectedAt:
+          type: string
+        imageUrl:
+          type: string
+        expertReviewNeeded:
+          type: boolean
+      required: [id, farmerId, cropType, diseaseName, confidence, severity, treatment, preventionTips, detectedAt, expertReviewNeeded]
+
+    DiseaseHistoryList:
+      type: object
+      properties:
+        detections:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiseaseDetectionResult"
+        total:
+          type: integer
+      required: [detections, total]
+
+    WeatherForecast:
+      type: object
+      properties:
+        date:
+          type: string
+        tempMin:
+          type: number
+        tempMax:
+          type: number
+        rainfall:
+          type: number
+        humidity:
+          type: number
+        windSpeed:
+          type: number
+        condition:
+          type: string
+        conditionAmharic:
+          type: string
+        conditionOromo:
+          type: string
+        farmingImpact:
+          type: string
+      required: [date, tempMin, tempMax, rainfall, humidity, windSpeed, condition, farmingImpact]
+
+    WeatherForecastResponse:
+      type: object
+      properties:
+        region:
+          type: string
+        current:
+          $ref: "#/components/schemas/WeatherForecast"
+        forecast:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeatherForecast"
+        alerts:
+          type: array
+          items:
+            type: string
+        updatedAt:
+          type: string
+      required: [region, current, forecast, alerts, updatedAt]
+
+    WeatherAdvisoryResponse:
+      type: object
+      properties:
+        region:
+          type: string
+        cropType:
+          type: string
+        advisory:
+          type: string
+        advisoryAmharic:
+          type: string
+        advisoryOromo:
+          type: string
+        plantingRecommendation:
+          type: string
+        irrigationNeeded:
+          type: boolean
+        sprayingAdvisory:
+          type: string
+        harvestWindow:
+          type: string
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+      required: [region, advisory, irrigationNeeded, riskLevel]
+
+    MarketPrice:
+      type: object
+      properties:
+        id:
+          type: integer
+        commodity:
+          type: string
+        commodityAmharic:
+          type: string
+        commodityOromo:
+          type: string
+        market:
+          type: string
+        region:
+          type: string
+        pricePerKg:
+          type: number
+        currency:
+          type: string
+          default: ETB
+        unit:
+          type: string
+        change:
+          type: number
+        changePercent:
+          type: number
+        reportedAt:
+          type: string
+        source:
+          type: string
+      required: [id, commodity, market, region, pricePerKg, currency, unit, reportedAt, source]
+
+    MarketPriceList:
+      type: object
+      properties:
+        prices:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarketPrice"
+        total:
+          type: integer
+        lastUpdated:
+          type: string
+      required: [prices, total, lastUpdated]
+
+    MarketPriceSubmit:
+      type: object
+      properties:
+        commodity:
+          type: string
+        market:
+          type: string
+        region:
+          type: string
+        pricePerKg:
+          type: number
+        unit:
+          type: string
+        reportedById:
+          type: integer
+      required: [commodity, market, region, pricePerKg, unit, reportedById]
+
+    MarketTrendsResponse:
+      type: object
+      properties:
+        commodity:
+          type: string
+        period:
+          type: string
+        dataPoints:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              avgPrice:
+                type: number
+              minPrice:
+                type: number
+              maxPrice:
+                type: number
+            required: [date, avgPrice, minPrice, maxPrice]
+        prediction30Days:
+          type: number
+        trend:
+          type: string
+          enum: [rising, falling, stable]
+        insights:
+          type: array
+          items:
+            type: string
+      required: [commodity, period, dataPoints, trend, insights]
+
+    GradingRequest:
+      type: object
+      properties:
+        farmerId:
+          type: integer
+        cropType:
+          type: string
+          enum: [coffee, teff, sesame]
+        batchId:
+          type: string
+        imageBase64:
+          type: string
+        weightKg:
+          type: number
+      required: [farmerId, cropType, weightKg]
+
+    GradingResult:
+      type: object
+      properties:
+        id:
+          type: integer
+        farmerId:
+          type: integer
+        cropType:
+          type: string
+        batchId:
+          type: string
+        grade:
+          type: string
+          enum: [Grade1, Grade2, Grade3, Grade4, Grade5, Specialty]
+        score:
+          type: number
+        moistureContent:
+          type: number
+        defectRate:
+          type: number
+        colorScore:
+          type: number
+        sizeUniformity:
+          type: number
+        estimatedPrice:
+          type: number
+        currency:
+          type: string
+        feedback:
+          type: array
+          items:
+            type: string
+        certificationEligible:
+          type: boolean
+        gradedAt:
+          type: string
+      required: [id, farmerId, cropType, grade, score, moistureContent, defectRate, estimatedPrice, currency, feedback, certificationEligible, gradedAt]
+
+    GradingRecordList:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/GradingResult"
+        total:
+          type: integer
+      required: [records, total]
+
+    Tractor:
+      type: object
+      properties:
+        id:
+          type: integer
+        ownerId:
+          type: integer
+        ownerName:
+          type: string
+        ownerPhone:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        horsepower:
+          type: integer
+        region:
+          type: string
+        woreda:
+          type: string
+        pricePerDay:
+          type: number
+        pricePerHectare:
+          type: number
+        available:
+          type: boolean
+        rating:
+          type: number
+        totalJobs:
+          type: integer
+        gpsLat:
+          type: number
+        gpsLng:
+          type: number
+        services:
+          type: array
+          items:
+            type: string
+      required: [id, ownerId, ownerName, ownerPhone, model, year, horsepower, region, pricePerDay, pricePerHectare, available, rating, totalJobs, services]
+
+    TractorList:
+      type: object
+      properties:
+        tractors:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tractor"
+        total:
+          type: integer
+      required: [tractors, total]
+
+    RegisterTractorRequest:
+      type: object
+      properties:
+        ownerId:
+          type: integer
+        model:
+          type: string
+        year:
+          type: integer
+        horsepower:
+          type: integer
+        region:
+          type: string
+        woreda:
+          type: string
+        pricePerDay:
+          type: number
+        pricePerHectare:
+          type: number
+        services:
+          type: array
+          items:
+            type: string
+      required: [ownerId, model, year, horsepower, region, pricePerDay, pricePerHectare, services]
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: integer
+        tractorId:
+          type: integer
+        farmerId:
+          type: integer
+        farmerName:
+          type: string
+        serviceType:
+          type: string
+        scheduledDate:
+          type: string
+        durationDays:
+          type: integer
+        hectares:
+          type: number
+        totalCost:
+          type: number
+        status:
+          type: string
+          enum: [pending, confirmed, completed, cancelled]
+        notes:
+          type: string
+        createdAt:
+          type: string
+      required: [id, tractorId, farmerId, farmerName, serviceType, scheduledDate, durationDays, totalCost, status, createdAt]
+
+    BookingList:
+      type: object
+      properties:
+        bookings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Booking"
+        total:
+          type: integer
+      required: [bookings, total]
+
+    CreateBookingRequest:
+      type: object
+      properties:
+        tractorId:
+          type: integer
+        farmerId:
+          type: integer
+        serviceType:
+          type: string
+        scheduledDate:
+          type: string
+        durationDays:
+          type: integer
+        hectares:
+          type: number
+        notes:
+          type: string
+      required: [tractorId, farmerId, serviceType, scheduledDate, durationDays, hectares]
+
+    ForumPost:
+      type: object
+      properties:
+        id:
+          type: integer
+        authorId:
+          type: integer
+        authorName:
+          type: string
+        authorRegion:
+          type: string
+        category:
+          type: string
+          enum: [crop_advisory, market, weather, disease, general, success_story]
+        title:
+          type: string
+        content:
+          type: string
+        language:
+          type: string
+          enum: [en, am, om]
+        tags:
+          type: array
+          items:
+            type: string
+        likes:
+          type: integer
+        replyCount:
+          type: integer
+        expertVerified:
+          type: boolean
+        createdAt:
+          type: string
+      required: [id, authorId, authorName, authorRegion, category, title, content, language, likes, replyCount, expertVerified, createdAt]
+
+    ForumPostList:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ForumPost"
+        total:
+          type: integer
+        page:
+          type: integer
+      required: [posts, total, page]
+
+    CreateForumPostRequest:
+      type: object
+      properties:
+        authorId:
+          type: integer
+        category:
+          type: string
+          enum: [crop_advisory, market, weather, disease, general, success_story]
+        title:
+          type: string
+        content:
+          type: string
+        language:
+          type: string
+          enum: [en, am, om]
+        tags:
+          type: array
+          items:
+            type: string
+      required: [authorId, category, title, content, language]
+
+    ForumReply:
+      type: object
+      properties:
+        id:
+          type: integer
+        postId:
+          type: integer
+        authorId:
+          type: integer
+        authorName:
+          type: string
+        content:
+          type: string
+        language:
+          type: string
+        isExpertReply:
+          type: boolean
+        likes:
+          type: integer
+        createdAt:
+          type: string
+      required: [id, postId, authorId, authorName, content, language, isExpertReply, likes, createdAt]
+
+    ForumReplyList:
+      type: object
+      properties:
+        replies:
+          type: array
+          items:
+            $ref: "#/components/schemas/ForumReply"
+        total:
+          type: integer
+      required: [replies, total]
+
+    CreateReplyRequest:
+      type: object
+      properties:
+        authorId:
+          type: integer
+        content:
+          type: string
+        language:
+          type: string
+          enum: [en, am, om]
+      required: [authorId, content, language]
+
+    CropBatch:
+      type: object
+      properties:
+        id:
+          type: string
+        farmerId:
+          type: integer
+        farmerName:
+          type: string
+        cropType:
+          type: string
+        variety:
+          type: string
+        quantityKg:
+          type: number
+        harvestDate:
+          type: string
+        region:
+          type: string
+        woreda:
+          type: string
+        grade:
+          type: string
+        blockchainHash:
+          type: string
+        blockchainTxId:
+          type: string
+        status:
+          type: string
+          enum: [harvested, processing, graded, sold, exported]
+        createdAt:
+          type: string
+      required: [id, farmerId, farmerName, cropType, quantityKg, harvestDate, region, status, createdAt]
+
+    CropBatchList:
+      type: object
+      properties:
+        batches:
+          type: array
+          items:
+            $ref: "#/components/schemas/CropBatch"
+        total:
+          type: integer
+      required: [batches, total]
+
+    CreateCropBatchRequest:
+      type: object
+      properties:
+        farmerId:
+          type: integer
+        cropType:
+          type: string
+        variety:
+          type: string
+        quantityKg:
+          type: number
+        harvestDate:
+          type: string
+        region:
+          type: string
+        woreda:
+          type: string
+      required: [farmerId, cropType, quantityKg, harvestDate, region]
+
+    SupplyChainEvent:
+      type: object
+      properties:
+        eventType:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        actor:
+          type: string
+        timestamp:
+          type: string
+        blockchainHash:
+          type: string
+        verified:
+          type: boolean
+      required: [eventType, description, location, actor, timestamp, verified]
+
+    SupplyChainTrace:
+      type: object
+      properties:
+        batchId:
+          type: string
+        cropType:
+          type: string
+        farmerName:
+          type: string
+        originRegion:
+          type: string
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/SupplyChainEvent"
+        currentStatus:
+          type: string
+        verificationUrl:
+          type: string
+      required: [batchId, cropType, farmerName, originRegion, events, currentStatus]
+
+    InsurancePolicy:
+      type: object
+      properties:
+        id:
+          type: integer
+        farmerId:
+          type: integer
+        farmerName:
+          type: string
+        coverageType:
+          type: string
+          enum: [drought, flood, frost, pest, disease]
+        cropCovered:
+          type: string
+        coverageAmountETB:
+          type: number
+        premiumMonthlyETB:
+          type: number
+        startDate:
+          type: string
+        endDate:
+          type: string
+        status:
+          type: string
+          enum: [active, expired, claimed]
+        triggerThreshold:
+          type: string
+        autoPayoutEnabled:
+          type: boolean
+        createdAt:
+          type: string
+      required: [id, farmerId, farmerName, coverageType, cropCovered, coverageAmountETB, premiumMonthlyETB, startDate, endDate, status, autoPayoutEnabled, createdAt]
+
+    InsurancePolicyList:
+      type: object
+      properties:
+        policies:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsurancePolicy"
+        total:
+          type: integer
+      required: [policies, total]
+
+    CreateInsurancePolicyRequest:
+      type: object
+      properties:
+        farmerId:
+          type: integer
+        coverageType:
+          type: string
+          enum: [drought, flood, frost, pest, disease]
+        cropCovered:
+          type: string
+        coverageAmountETB:
+          type: number
+        startDate:
+          type: string
+        endDate:
+          type: string
+      required: [farmerId, coverageType, cropCovered, coverageAmountETB, startDate, endDate]
+
+    InsuranceClaim:
+      type: object
+      properties:
+        id:
+          type: integer
+        policyId:
+          type: integer
+        farmerId:
+          type: integer
+        claimType:
+          type: string
+        description:
+          type: string
+        claimAmountETB:
+          type: number
+        status:
+          type: string
+          enum: [pending, approved, paid, rejected]
+        weatherDataEvidence:
+          type: string
+        autoTriggered:
+          type: boolean
+        processedAt:
+          type: string
+        createdAt:
+          type: string
+      required: [id, policyId, farmerId, claimType, description, claimAmountETB, status, autoTriggered, createdAt]
+
+    InsuranceClaimList:
+      type: object
+      properties:
+        claims:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsuranceClaim"
+        total:
+          type: integer
+      required: [claims, total]
+
+    UssdRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        serviceCode:
+          type: string
+        phoneNumber:
+          type: string
+        text:
+          type: string
+        networkCode:
+          type: string
+      required: [sessionId, serviceCode, phoneNumber, text]
+
+    UssdResponse:
+      type: object
+      properties:
+        response:
+          type: string
+        sessionState:
+          type: string
+          enum: [CON, END]
+      required: [response, sessionState]
+
+    DashboardSummary:
+      type: object
+      properties:
+        totalFarmers:
+          type: integer
+        activeFarmers:
+          type: integer
+        totalAdvisories:
+          type: integer
+        diseaseDetectionsToday:
+          type: integer
+        activeInsurancePolicies:
+          type: integer
+        marketPricesUpdatedToday:
+          type: integer
+        tractorsAvailable:
+          type: integer
+        forumPostsThisWeek:
+          type: integer
+        cropBatchesTracked:
+          type: integer
+        topCrops:
+          type: array
+          items:
+            type: object
+            properties:
+              crop:
+                type: string
+              count:
+                type: integer
+            required: [crop, count]
+        regionCoverage:
+          type: array
+          items:
+            type: object
+            properties:
+              region:
+                type: string
+              farmerCount:
+                type: integer
+            required: [region, farmerCount]
+      required: [totalFarmers, activeFarmers, totalAdvisories, diseaseDetectionsToday, activeInsurancePolicies, marketPricesUpdatedToday, tractorsAvailable, forumPostsThisWeek, cropBatchesTracked, topCrops, regionCoverage]
+
+    RegionalStatsResponse:
+      type: object
+      properties:
+        region:
+          type: string
+        farmerCount:
+          type: integer
+        cropDistribution:
+          type: array
+          items:
+            type: object
+            properties:
+              crop:
+                type: string
+              percentage:
+                type: number
+            required: [crop, percentage]
+        averageLandSize:
+          type: number
+        diseaseAlerts:
+          type: integer
+        marketPrices:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarketPrice"
+      required: [region, farmerCount, cropDistribution, averageLandSize, diseaseAlerts, marketPrices]
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [advisory, disease_detection, market_price, booking, forum_post, grading, insurance]
+        description:
+          type: string
+        actor:
+          type: string
+        region:
+          type: string
+        timestamp:
+          type: string
+        metadata:
+          type: object
+      required: [id, type, description, actor, region, timestamp]
+
+    RecentActivityList:
+      type: object
+      properties:
+        activities:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityItem"
+        total:
+          type: integer
+      required: [activities, total]
+
+    CropCalendarEntry:
+      type: object
+      properties:
+        crop:
+          type: string
+        cropAmharic:
+          type: string
+        cropOromo:
+          type: string
+        plantingMonths:
+          type: array
+          items:
+            type: integer
+        harvestMonths:
+          type: array
+          items:
+            type: integer
+        region:
+          type: string
+        notes:
+          type: string
+      required: [crop, plantingMonths, harvestMonths, region]
+
+    CropCalendarResponse:
+      type: object
+      properties:
+        region:
+          type: string
+        month:
+          type: integer
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/CropCalendarEntry"
+        currentSeason:
+          type: string
+      required: [region, month, entries, currentSeason]

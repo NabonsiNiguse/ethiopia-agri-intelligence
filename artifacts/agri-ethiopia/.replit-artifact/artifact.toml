@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "AI Smart Agriculture - Ethiopia"
+version = "1.0.0"
+id = "artifacts/agri-ethiopia"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24610
+
+[services.development]
+run = "pnpm --filter @workspace/agri-ethiopia run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/agri-ethiopia", "run", "build" ]
+publicDir = "artifacts/agri-ethiopia/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24610"
+BASE_PATH = "/"

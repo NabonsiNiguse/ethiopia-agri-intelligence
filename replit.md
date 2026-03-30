@@ -2,7 +2,7 @@
 
 ## Overview
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+AI-Powered Smart Agriculture Advisory and Market Intelligence System for Ethiopia — a full-stack production-level platform serving Ethiopian farmers with AI advisory, crop disease detection, market intelligence, weather forecasting, blockchain traceability, micro-insurance, USSD integration, and more.
 
 ## Stack
 
@@ -15,82 +15,105 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
+- **Frontend**: React + Vite + TailwindCSS + Framer Motion
+- **Charts**: Recharts
 
 ## Structure
 
 ```text
 artifacts-monorepo/
-├── artifacts/              # Deployable applications
-│   └── api-server/         # Express API server
-├── lib/                    # Shared libraries
-│   ├── api-spec/           # OpenAPI spec + Orval codegen config
+├── artifacts/
+│   ├── api-server/         # Express 5 API backend (all modules)
+│   └── agri-ethiopia/      # React + Vite frontend dashboard
+├── lib/
+│   ├── api-spec/           # OpenAPI spec (all 50+ endpoints)
 │   ├── api-client-react/   # Generated React Query hooks
-│   ├── api-zod/            # Generated Zod schemas from OpenAPI
-│   └── db/                 # Drizzle ORM schema + DB connection
-├── scripts/                # Utility scripts (single workspace package)
-│   └── src/                # Individual .ts scripts, run via `pnpm --filter @workspace/scripts run <script>`
-├── pnpm-workspace.yaml     # pnpm workspace (artifacts/*, lib/*, lib/integrations/*, scripts)
-├── tsconfig.base.json      # Shared TS options (composite, bundler resolution, es2022)
-├── tsconfig.json           # Root TS project references
-└── package.json            # Root package with hoisted devDeps
+│   ├── api-zod/            # Generated Zod schemas
+│   └── db/                 # Drizzle ORM schema (all 10 domain tables)
+├── scripts/                # Utility scripts
+├── pnpm-workspace.yaml
+├── tsconfig.base.json
+└── package.json
 ```
 
-## TypeScript & Composite Projects
+## System Modules
 
-Every package extends `tsconfig.base.json` which sets `composite: true`. The root `tsconfig.json` lists all packages as project references. This means:
+1. **AI Farming Advisor** — Chat-based AI advisory with multilingual support (en/am/om), session tracking
+2. **Crop Disease Detection** — Image-based detection with treatment recommendations, severity scoring
+3. **Weather & Climate Advisory** — 7-day forecast, smart farming advisory per region and crop
+4. **Market Intelligence** — Real-time commodity price aggregation, trends, predictions
+5. **AI Crop Quality Grading** — Coffee/teff/sesame quality grading with grade, moisture, defect analysis
+6. **Smart Logistics (Tractor Hub)** — Tractor sharing platform with booking management
+7. **Farmer Community Forum** — Multilingual posts, expert verification, community Q&A
+8. **Crop Traceability** — Blockchain-based supply chain tracking with hash verification
+9. **Micro-Insurance** — Auto-payout parametric insurance tied to weather data triggers
+10. **USSD Service** — Interactive *844# menu for feature phone users (5 menu levels)
+11. **Farmer Registry** — Complete farmer profiles with GPS, crops, language preferences
+12. **Dashboard** — National command center with live metrics, regional stats, crop calendar
 
-- **Always typecheck from the root** — run `pnpm run typecheck` (which runs `tsc --build --emitDeclarationOnly`). This builds the full dependency graph so that cross-package imports resolve correctly. Running `tsc` inside a single package will fail if its dependencies haven't been built yet.
-- **`emitDeclarationOnly`** — we only emit `.d.ts` files during typecheck; actual JS bundling is handled by esbuild/tsx/vite...etc, not `tsc`.
-- **Project references** — when package A depends on package B, A's `tsconfig.json` must list B in its `references` array. `tsc --build` uses this to determine build order and skip up-to-date packages.
+## Database Tables
 
-## Root Scripts
+- `farmers` — Farmer profiles with GPS, crops, language preferences
+- `advisory_sessions` + `advisory_messages` — AI advisor session tracking
+- `disease_detections` — Crop disease detection records with treatment
+- `market_prices` — Commodity price data with change tracking
+- `grading_records` — AI quality grading results per batch
+- `tractors` + `bookings` — Logistics platform
+- `forum_posts` + `forum_replies` — Community forum
+- `crop_batches` + `supply_chain_events` — Blockchain traceability
+- `insurance_policies` + `insurance_claims` — Micro-insurance
+- `activity_log` — Platform-wide activity feed
 
-- `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages that define it
-- `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly` using project references
+## API Endpoints
 
-## Packages
+50+ REST endpoints across all modules. See `lib/api-spec/openapi.yaml` for the full spec.
 
-### `artifacts/api-server` (`@workspace/api-server`)
+Base URL: `/api`
 
-Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` for request and response validation and `@workspace/db` for persistence.
+Key groups:
+- `/api/farmers` — CRUD farmer profiles
+- `/api/advisory/chat` + `/sessions` — AI advisor
+- `/api/disease/detect` + `/history` — Disease detection
+- `/api/weather/forecast` + `/advisory` — Weather
+- `/api/market/prices` + `/trends` — Market data
+- `/api/grading/analyze` + `/records` — Quality grading
+- `/api/logistics/tractors` + `/bookings` — Logistics
+- `/api/forum/posts` + `/replies` — Community forum
+- `/api/traceability/batches` + `/trace` — Supply chain
+- `/api/insurance/policies` + `/claims` — Insurance
+- `/api/ussd/session` — USSD handler (*844#)
+- `/api/dashboard/summary` + `/regional-stats` + `/recent-activity` + `/crop-calendar` — Analytics
 
-- Entry: `src/index.ts` — reads `PORT`, starts Express
-- App setup: `src/app.ts` — mounts CORS, JSON/urlencoded parsing, routes at `/api`
-- Routes: `src/routes/index.ts` mounts sub-routers; `src/routes/health.ts` exposes `GET /health` (full path: `/api/health`)
-- Depends on: `@workspace/db`, `@workspace/api-zod`
-- `pnpm --filter @workspace/api-server run dev` — run the dev server
-- `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
-- Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest
+## Localization
 
-### `lib/db` (`@workspace/db`)
+- Supports English (en), Amharic (am), Afaan Oromo (om)
+- AI responses include multilingual variants
+- Disease names, commodity names, weather conditions in 3 languages
+- USSD menus bilingual (English + Amharic)
 
-Database layer using Drizzle ORM with PostgreSQL. Exports a Drizzle client instance and schema models.
+## Architecture Page
 
-- `src/index.ts` — creates a `Pool` + Drizzle instance, exports schema
-- `src/schema/index.ts` — barrel re-export of all models
-- `src/schema/<modelname>.ts` — table definitions with `drizzle-zod` insert schemas (no models definitions exist right now)
-- `drizzle.config.ts` — Drizzle Kit config (requires `DATABASE_URL`, automatically provided by Replit)
-- Exports: `.` (pool, db, schema), `./schema` (schema only)
+The `/architecture` route in the frontend contains a comprehensive system architecture showcase including:
+- Multi-tier architecture diagram
+- Full Django/Python backend folder structure
+- TensorFlow/OpenCV AI module code samples
+- USSD handler implementation
+- Blockchain smart contract snippet
+- Micro-insurance auto-payout logic
+- Deployment strategy (Docker + Kubernetes)
+- GitHub Actions CI/CD pipeline
+- Localization JSON samples
 
-Production migrations are handled by Replit when publishing. In development, we just use `pnpm --filter @workspace/db run push`, and we fallback to `pnpm --filter @workspace/db run push-force`.
+## Running
 
-### `lib/api-spec` (`@workspace/api-spec`)
+```bash
+# Start all services
+pnpm --filter @workspace/api-server run dev
+pnpm --filter @workspace/agri-ethiopia run dev
 
-Owns the OpenAPI 3.1 spec (`openapi.yaml`) and the Orval config (`orval.config.ts`). Running codegen produces output into two sibling packages:
+# Push DB schema
+pnpm --filter @workspace/db run push
 
-1. `lib/api-client-react/src/generated/` — React Query hooks + fetch client
-2. `lib/api-zod/src/generated/` — Zod schemas
-
-Run codegen: `pnpm --filter @workspace/api-spec run codegen`
-
-### `lib/api-zod` (`@workspace/api-zod`)
-
-Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used by `api-server` for response validation.
-
-### `lib/api-client-react` (`@workspace/api-client-react`)
-
-Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
-
-### `scripts` (`@workspace/scripts`)
-
-Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+# Codegen after spec changes
+pnpm --filter @workspace/api-spec run codegen
+```
