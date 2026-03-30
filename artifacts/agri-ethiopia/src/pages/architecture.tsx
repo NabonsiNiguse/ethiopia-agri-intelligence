@@ -1,7 +1,9 @@
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Network, Cpu, Lock, Smartphone, FolderTree, Code, Globe, Shield, TerminalSquare, Database, Cloud } from "lucide-react";
+import { Network, Cpu, Lock, Smartphone, FolderTree, Code, Globe, Shield, TerminalSquare, Database, Cloud, BookOpen } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 function CodeBlock({ code, language }: { code: string, language: string }) {
   return (
@@ -25,12 +27,17 @@ export default function Architecture() {
   return (
     <div className="space-y-12 animate-in fade-in duration-500 pb-12 max-w-6xl mx-auto">
       <div>
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">System Architecture</h1>
-        <p className="text-muted-foreground mt-3 text-lg max-w-3xl leading-relaxed">
-          Technical overview of the AI-Powered Smart Agriculture Advisory and Market Intelligence System. 
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">Technical Architecture & Implementation</h1>
+        <p className="text-muted-foreground mt-3 text-lg max-w-3xl leading-relaxed mb-6">
+          AgriConnect Ethiopia — Final Year Research Project | Computer Science Department.
           Built to scale across millions of smallholder farmers with intermittent connectivity using edge computing, 
           offline-first mobile architectures, and USSD fallbacks.
         </p>
+        <Link href="/project-design">
+          <Button variant="outline" className="gap-2">
+            <BookOpen className="w-4 h-4" /> View Full Project Design
+          </Button>
+        </Link>
       </div>
 
       {/* 1. System Architecture Diagram */}

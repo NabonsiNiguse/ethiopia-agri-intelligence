@@ -1,0 +1,127 @@
+You are a senior software architect, system analyst, and final-year project advisor.
+
+Design a focused, production-ready, and academically defendable project for Ethiopia called:
+
+“AgriConnect Ethiopia: AI-Powered Smart Agriculture Advisory and Decision Support System”
+
+Your task is to help me turn this into a complete research and software project with clear boundaries, realistic scope, and strong innovation.
+
+PROJECT GOAL
+Build a smart agriculture platform for Ethiopian farmers that provides:
+- farmer registration and farm profiling
+- AI-based agricultural advisory
+- market price intelligence
+- weather advisory
+- mobile or USSD access for low-connectivity users
+- basic crop disease detection
+
+IMPORTANT PROJECT RULE
+Do not try to build everything at once.
+Clearly separate the project into:
+1. Core system features that must be implemented
+2. Advanced features that may be partially implemented or demoed
+3. Future research features that are only proposed, not fully built
+
+CORE SYSTEM FEATURES
+These are the required modules that must be fully designed and implemented:
+1. Farmer registration and profile management
+   - farmer name
+   - location
+   - crop type
+   - farm size
+   - planting season
+
+2. AI advisory system
+   - text-based agricultural recommendations
+   - rule-based or API-based AI responses
+   - advice for planting, spraying, irrigation, and harvesting
+
+3. Market price system
+   - display crop prices
+   - basic price trends
+   - compare prices by market and region
+
+4. Weather advisory system
+   - weather API integration
+   - farming recommendations based on weather
+   - drought or rain alerts
+
+5. User access interface
+   - mobile app or USSD
+   - simple menu-based interaction
+   - support for low-literacy and low-connectivity users
+
+6. Disease detection module
+   - crop image upload
+   - basic image classification or pre-trained model
+   - simple diagnosis result and treatment advice
+
+ADVANCED FEATURES
+These are optional extensions that may be partially implemented, simulated, or presented as prototype ideas:
+- crop quality grading
+- logistics and transport coordination
+- cooperative management
+- voice assistant in Amharic and Afaan Oromo
+- crop recommendation engine
+- early pest and disease warning network
+
+FUTURE WORK / RESEARCH EXTENSIONS
+These features must be described as future improvements, not necessarily implemented:
+- blockchain traceability
+- micro-insurance auto payout
+- IoT sensor integration
+- satellite-based monitoring
+- farmer credit scoring
+- automated irrigation systems
+
+SYSTEM BOUNDARIES
+Clearly define what this project includes and what it does not include.
+The project must focus on solving the most important agricultural problems in Ethiopia:
+- lack of timely information
+- poor market access
+- weather uncertainty
+- crop disease issues
+- limited access to digital services in rural areas
+
+DELIVERABLES REQUIRED
+Generate the following in a structured and professional way:
+
+1. Project title
+2. Problem statement
+3. Objectives
+   - general objective
+   - specific objectives
+4. Scope of the system
+5. Core features vs advanced features vs future work
+6. System architecture
+7. System flow
+8. Use case description
+9. Database entities
+10. Technology stack
+11. Evaluation plan
+12. Research contribution
+13. Conclusion
+
+EVALUATION PLAN
+Include a realistic testing strategy:
+- functional testing
+- usability testing
+- response time testing
+- accuracy testing for disease detection
+- user feedback testing
+
+RESEARCH CONTRIBUTION
+Explain clearly how this project improves agricultural systems in Ethiopia by:
+- providing offline-accessible services
+- supporting low-connectivity farmers
+- combining advisory, market intelligence, and weather guidance
+- improving decision-making for smallholder farmers
+
+OUTPUT STYLE
+- Use simple academic English
+- Be clear and organized
+- Make the scope realistic for a final-year project
+- Keep the system powerful but implementable
+- Write as if this will be submitted to a university department and defended in front of examiners
+
+Now generate the full project design in a structured format.

@@ -10,22 +10,25 @@ import {
   Users, 
   ShieldCheck, 
   Map, 
-  Cpu
+  Cpu,
+  BookOpen,
+  GraduationCap
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/advisory", label: "AI Advisor", icon: MessageSquare },
-  { href: "/disease", label: "Disease Detection", icon: Leaf },
-  { href: "/weather", label: "Weather Advisory", icon: CloudSun },
-  { href: "/market", label: "Market Intel", icon: TrendingUp },
-  { href: "/grading", label: "Crop Grading", icon: CheckCircle },
-  { href: "/logistics", label: "Tractor Hub", icon: Truck },
-  { href: "/forum", label: "Farmer Forum", icon: Users },
-  { href: "/traceability", label: "Traceability", icon: Map },
-  { href: "/insurance", label: "Micro-Insurance", icon: ShieldCheck },
-  { href: "/farmers", label: "Farmer Registry", icon: Users },
-  { href: "/architecture", label: "System Arch", icon: Cpu },
+  { href: "/", label: "Dashboard", icon: LayoutDashboard, tier: "core" },
+  { href: "/advisory", label: "AI Advisor", icon: MessageSquare, tier: "core" },
+  { href: "/disease", label: "Disease Detection", icon: Leaf, tier: "core" },
+  { href: "/weather", label: "Weather Advisory", icon: CloudSun, tier: "core" },
+  { href: "/market", label: "Market Intel", icon: TrendingUp, tier: "core" },
+  { href: "/grading", label: "Crop Grading", icon: CheckCircle, tier: "advanced" },
+  { href: "/logistics", label: "Tractor Hub", icon: Truck, tier: "advanced" },
+  { href: "/forum", label: "Farmer Forum", icon: Users, tier: "advanced" },
+  { href: "/traceability", label: "Traceability", icon: Map, tier: "future" },
+  { href: "/insurance", label: "Micro-Insurance", icon: ShieldCheck, tier: "future" },
+  { href: "/farmers", label: "Farmer Registry", icon: Users, tier: "core" },
+  { href: "/architecture", label: "System Arch", icon: Cpu, tier: "doc" },
+  { href: "/project-design", label: "Project Design", icon: BookOpen, tier: "doc" },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -55,7 +58,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     }`}
                   >
                     <item.icon className={`w-5 h-5 ${isActive ? "text-sidebar-primary" : "text-sidebar-foreground/60"}`} />
-                    {item.label}
+                    <span className="flex-1">{item.label}</span>
+                    {item.tier === "advanced" && (
+                      <span className="text-[9px] uppercase tracking-wider font-bold bg-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded">Adv</span>
+                    )}
+                    {item.tier === "future" && (
+                      <span className="text-[9px] uppercase tracking-wider font-bold bg-zinc-500/20 text-zinc-400 px-1.5 py-0.5 rounded">Fut</span>
+                    )}
                   </div>
                 </Link>
               );

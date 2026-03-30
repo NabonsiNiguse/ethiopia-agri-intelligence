@@ -2,7 +2,8 @@ import { useListTractors, getListTractorsQueryKey } from "@workspace/api-client-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, CheckCircle2, Star, Clock } from "lucide-react";
+import { MapPin, Calendar, CheckCircle2, Star, Clock, AlertTriangle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Logistics() {
   const { data: tractors, isLoading } = useListTractors(
@@ -12,6 +13,14 @@ export default function Logistics() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      <Alert className="bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400">
+        <AlertTriangle className="h-4 w-4 !text-amber-600 dark:!text-amber-400" />
+        <AlertTitle className="font-bold">Advanced Feature</AlertTitle>
+        <AlertDescription>
+          This module is partially implemented as a prototype. Core system features are fully functional.
+        </AlertDescription>
+      </Alert>
+
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Smart Tractor Hub</h1>

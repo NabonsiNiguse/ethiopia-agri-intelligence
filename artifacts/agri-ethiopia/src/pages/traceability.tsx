@@ -1,8 +1,9 @@
 import { useListCropBatches, getListCropBatchesQueryKey } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link2, ShieldCheck, MapPin, Box, QrCode } from "lucide-react";
+import { Link2, ShieldCheck, MapPin, Box, QrCode, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Traceability() {
   const { data: batches, isLoading } = useListCropBatches(
@@ -12,6 +13,14 @@ export default function Traceability() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      <Alert className="bg-zinc-500/10 border-zinc-500/30 text-zinc-700 dark:text-zinc-400">
+        <Info className="h-4 w-4 !text-zinc-600 dark:!text-zinc-400" />
+        <AlertTitle className="font-bold">Future Research Extension</AlertTitle>
+        <AlertDescription>
+          This module is proposed and prototyped for demonstration. It represents planned future development.
+        </AlertDescription>
+      </Alert>
+
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Blockchain Traceability</h1>

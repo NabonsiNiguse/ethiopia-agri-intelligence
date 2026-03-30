@@ -17,6 +17,7 @@ import Traceability from "@/pages/traceability";
 import Insurance from "@/pages/insurance";
 import Farmers from "@/pages/farmers";
 import Architecture from "@/pages/architecture";
+import ProjectDesign from "@/pages/project-design";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ function Router() {
         <Route path="/insurance" component={Insurance} />
         <Route path="/farmers" component={Farmers} />
         <Route path="/architecture" component={Architecture} />
+        <Route path="/project-design" component={ProjectDesign} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
