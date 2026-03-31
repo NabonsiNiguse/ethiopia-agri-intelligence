@@ -68,14 +68,14 @@ export default function Grading() {
           <div className="space-y-4">
             {isLoading ? (
               <div className="p-8 text-center text-muted-foreground animate-pulse">Loading records...</div>
-            ) : records?.records.length === 0 ? (
+            ) : records?.records?.length === 0 ? (
               <div className="p-12 flex flex-col items-center justify-center text-muted-foreground border-2 border-dashed rounded-xl">
                 <AlertCircle className="w-8 h-8 mb-4 opacity-50" />
                 <p>No grading records found.</p>
                 <Button variant="outline" className="mt-4">Submit First Sample</Button>
               </div>
             ) : (
-              records?.records.map(record => (
+              records?.records?.map(record => (
                 <div key={record.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg gap-4 hover:bg-muted/10 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center text-lg font-bold text-foreground">

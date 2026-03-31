@@ -1,12 +1,12 @@
 import { defineConfig } from "drizzle-kit";
-import path from "path";
 
 if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL, ensure the database is provisioned");
+  throw new Error("DATABASE_URL is missing. Run 'set DATABASE_URL=...' first");
 }
 
 export default defineConfig({
-  schema: path.join(__dirname, "./src/schema/index.ts"),
+  // Using the wildcard *.ts is much safer on Windows
+  schema: "./src/schema/*.ts",
   dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL,

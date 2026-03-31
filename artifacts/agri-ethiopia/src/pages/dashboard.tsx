@@ -34,8 +34,8 @@ export default function Dashboard() {
             <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{summary.activeFarmers.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground mt-1">Out of {summary.totalFarmers.toLocaleString()} registered</p>
+            <div className="text-3xl font-bold text-foreground">{summary?.activeFarmers?.toLocaleString() ?? "0"}</div>
+            <p className="text-xs text-muted-foreground mt-1">Out of {summary?.totalFarmers?.toLocaleString() ?? "0"} registered</p>
           </CardContent>
         </Card>
 
@@ -56,7 +56,7 @@ export default function Dashboard() {
             <MessageSquare className="h-4 w-4 text-secondary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{summary.totalAdvisories.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-foreground">{summary?.totalAdvisories?.toLocaleString() ?? "0"}</div>
             <p className="text-xs text-muted-foreground mt-1">Across SMS, USSD, and App</p>
           </CardContent>
         </Card>
@@ -67,7 +67,7 @@ export default function Dashboard() {
             <ShieldCheck className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{summary.activeInsurancePolicies.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-foreground">{summary?.activeInsurancePolicies?.toLocaleString() ?? "0"}</div>
             <p className="text-xs text-muted-foreground mt-1">Policies currently active</p>
           </CardContent>
         </Card>
@@ -103,7 +103,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {summary.regionCoverage.map((region) => (
+              {summary.regionCoverage?.map((region) => (
                 <div key={region.region} className="flex items-center justify-between">
                   <span className="text-sm font-medium">{region.region}</span>
                   <div className="flex items-center gap-4 flex-1 ml-4">
@@ -130,10 +130,10 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {summary.topCrops.map((crop) => (
+              {summary.topCrops?.map((crop) => (
                 <div key={crop.crop} className="flex items-center justify-between border-b pb-2 last:border-0">
                   <span className="text-sm font-medium capitalize">{crop.crop}</span>
-                  <span className="text-sm font-bold text-primary">{crop.count.toLocaleString()} queries</span>
+                  <span className="text-sm font-bold text-primary">{crop?.count?.toLocaleString() ?? "0"} queries</span>
                 </div>
               ))}
             </div>

@@ -30,16 +30,16 @@ export default function Weather() {
             </div>
             <div className="flex-1 space-y-4 text-center md:text-left">
               <div>
-                <h2 className="text-5xl font-bold text-foreground">{weather.current.tempMax}°C</h2>
-                <p className="text-xl font-medium text-muted-foreground mt-1">{weather.current.condition}</p>
+                <h2 className="text-5xl font-bold text-foreground">{weather?.current?.tempMax ?? "0"}°C</h2>
+                <p className="text-xl font-medium text-muted-foreground mt-1">{weather?.current?.condition ?? "Loading..."}</p>           
               </div>
               <div className="flex flex-wrap justify-center md:justify-start gap-6 text-sm">
-                <div className="flex items-center gap-2"><Droplets className="w-4 h-4 text-primary" /> {weather.current.humidity}% Humidity</div>
-                <div className="flex items-center gap-2"><Wind className="w-4 h-4 text-primary" /> {weather.current.windSpeed} km/h Wind</div>
-                <div className="flex items-center gap-2"><CloudRain className="w-4 h-4 text-primary" /> {weather.current.rainfall}mm Rain</div>
+                <div className="flex items-center gap-2"><Droplets className="w-4 h-4 text-primary" /> {weather?.current?.humidity}% Humidity</div>
+                <div className="flex items-center gap-2"><Wind className="w-4 h-4 text-primary" /> {weather?.current?.windSpeed} km/h Wind</div>
+                <div className="flex items-center gap-2"><CloudRain className="w-4 h-4 text-primary" /> {weather?.current?.rainfall}mm Rain</div>
               </div>
               <div className="mt-4 p-4 bg-background/50 rounded-lg border border-primary/10">
-                <p className="font-medium text-sm">🌾 Impact: {weather.current.farmingImpact}</p>
+                <p className="font-medium text-sm">🌾 Impact: {weather?.current?.farmingImpact}</p>
               </div>
             </div>
           </CardContent>
@@ -53,12 +53,12 @@ export default function Weather() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-4">
-              {weather.alerts.map((alert, i) => (
+              {weather.alerts?.map((alert, i) => (
                 <li key={i} className="text-sm font-medium leading-relaxed bg-background p-3 rounded border border-destructive/10">
                   {alert}
                 </li>
               ))}
-              {weather.alerts.length === 0 && <li className="text-sm text-muted-foreground">No active alerts for this region.</li>}
+              {weather.alerts?.length === 0 && <li className="text-sm text-muted-foreground">No active alerts for this region.</li>}
             </ul>
           </CardContent>
         </Card>
@@ -67,7 +67,7 @@ export default function Weather() {
       <div>
         <h3 className="text-xl font-bold mb-4">7-Day Projection</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-          {weather.forecast.map((day, i) => (
+          {weather.forecast?.map((day, i) => (
             <Card key={i} className="text-center shadow-sm hover:border-primary/50 transition-colors">
               <CardContent className="p-4 py-6 space-y-3">
                 <p className="text-sm font-bold text-muted-foreground uppercase">{new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</p>

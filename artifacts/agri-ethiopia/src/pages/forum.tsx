@@ -50,10 +50,10 @@ export default function Forum() {
               <Card key={i} className="animate-pulse h-32"></Card>
             ))}
           </div>
-        ) : forumData?.posts.length === 0 ? (
+        ) : forumData?.posts?.length === 0 ? (
           <div className="p-12 text-center text-muted-foreground bg-card rounded-lg border">No posts found in this category.</div>
         ) : (
-          forumData?.posts.map(post => (
+          forumData?.posts?.map(post => (
             <Card key={post.id} className="shadow-sm hover:shadow-md transition-shadow border-border/50">
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row gap-4 md:gap-6">

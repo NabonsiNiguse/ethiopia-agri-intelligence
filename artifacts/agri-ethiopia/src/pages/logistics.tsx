@@ -40,10 +40,10 @@ export default function Logistics() {
               </CardContent>
             </Card>
           ))
-        ) : tractors?.tractors.length === 0 ? (
+        ) : tractors?.tractors?.length === 0 ? (
           <div className="col-span-full p-12 text-center text-muted-foreground">No tractors available in your region at the moment.</div>
         ) : (
-          tractors?.tractors.map(tractor => (
+          tractors?.tractors?.map(tractor => (
             <Card key={tractor.id} className="overflow-hidden flex flex-col shadow-sm hover:shadow-md transition-shadow border-border/50">
               <div className="h-48 bg-muted relative">
                 {/* Fallback image representing a tractor */}

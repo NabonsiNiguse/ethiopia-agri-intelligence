@@ -132,10 +132,10 @@ export default function Market() {
               <tbody>
                 {isLoadingPrices ? (
                    <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">Loading prices...</td></tr>
-                ) : prices?.prices.length === 0 ? (
+                ) : prices?.prices?.length === 0 ? (
                    <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">No price data reported yet.</td></tr>
                 ) : (
-                  prices?.prices.map((price) => (
+                  prices?.prices?.map((price) => (
                     <tr key={price.id} className="border-b last:border-0 hover:bg-muted/10 transition-colors">
                       <td className="px-4 py-4 font-medium">{price.commodity} <span className="text-xs text-muted-foreground block">{price.commodityAmharic}</span></td>
                       <td className="px-4 py-4 text-muted-foreground">{price.market}</td>
