@@ -1,6 +1,7 @@
 import { useGetDashboardSummary, getGetDashboardSummaryQueryKey } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Users, AlertTriangle, TrendingUp, ShieldCheck, Tractor, MessageSquare } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Users, AlertTriangle, TrendingUp, ShieldCheck, Tractor, MessageSquare, Database } from "lucide-react";
 
 export default function Dashboard() {
   const { data: summary, isLoading } = useGetDashboardSummary({
@@ -18,7 +19,30 @@ export default function Dashboard() {
     </div>;
   }
 
-  if (!summary) return null;
+  // Use real data if available, otherwise show meaningful demo stats
+  const stats = summary ?? {
+    totalFarmers: 0,
+    activeFarmers: 0,
+    totalAdvisories: 0,
+    diseaseDetectionsToday: 0,
+    activeInsurancePolicies: 0,
+    marketPricesUpdatedToday: 0,
+    tractorsAvailable: 0,
+    regionCoverage: [
+      { region: "Oromia", farmerCount: 0 },
+      { region: "Amhara", farmerCount: 0 },
+      { region: "SNNPR",  farmerCount: 0 },
+      { region: "Tigray", farmerCount: 0 },
+    ],
+    topCrops: [
+      { crop: "Coffee", count: 0 },
+      { crop: "Teff",   count: 0 },
+      { crop: "Sesame", count: 0 },
+      { crop: "Wheat",  count: 0 },
+    ],
+  };
+
+  const isEmpty = stats.totalFarmers === 0;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -27,6 +51,15 @@ export default function Dashboard() {
         <p className="text-muted-foreground mt-2 text-lg">Real-time intelligence across all integrated regions.</p>
       </div>
 
+      {isEmpty && (
+        <Alert className="bg-blue-500/10 border-blue-500/30">
+          <Database className="h-4 w-4 text-blue-500" />
+          <AlertDescription className="text-blue-700 dark:text-blue-400">
+            Database is empty. Register farmers and submit data through the modules to see live statistics here.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card className="bg-primary/5 border-primary/20 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -34,8 +67,8 @@ export default function Dashboard() {
             <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{summary?.activeFarmers?.toLocaleString() ?? "0"}</div>
-            <p className="text-xs text-muted-foreground mt-1">Out of {summary?.totalFarmers?.toLocaleString() ?? "0"} registered</p>
+            <div className="text-3xl font-bold text-foreground">{stats.activeFarmers.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground mt-1">Out of {stats.totalFarmers.toLocaleString()} registered</p>
           </CardContent>
         </Card>
 
@@ -45,7 +78,7 @@ export default function Dashboard() {
             <AlertTriangle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-destructive">{summary.diseaseDetectionsToday}</div>
+            <div className="text-3xl font-bold text-destructive">{stats.diseaseDetectionsToday}</div>
             <p className="text-xs text-muted-foreground mt-1">Requiring immediate extension support</p>
           </CardContent>
         </Card>
@@ -56,7 +89,7 @@ export default function Dashboard() {
             <MessageSquare className="h-4 w-4 text-secondary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{summary?.totalAdvisories?.toLocaleString() ?? "0"}</div>
+            <div className="text-3xl font-bold text-foreground">{stats.totalAdvisories.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground mt-1">Across SMS, USSD, and App</p>
           </CardContent>
         </Card>
@@ -67,7 +100,7 @@ export default function Dashboard() {
             <ShieldCheck className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{summary?.activeInsurancePolicies?.toLocaleString() ?? "0"}</div>
+            <div className="text-3xl font-bold text-foreground">{stats.activeInsurancePolicies.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground mt-1">Policies currently active</p>
           </CardContent>
         </Card>
@@ -78,19 +111,19 @@ export default function Dashboard() {
             <TrendingUp className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{summary.marketPricesUpdatedToday}</div>
+            <div className="text-3xl font-bold text-foreground">{stats.marketPricesUpdatedToday}</div>
             <p className="text-xs text-muted-foreground mt-1">Prices refreshed today</p>
           </CardContent>
         </Card>
 
         <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Tractors Deployed</CardTitle>
+            <CardTitle className="text-sm font-medium">Tractors Available</CardTitle>
             <Tractor className="h-4 w-4 text-secondary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{summary.tractorsAvailable}</div>
-            <p className="text-xs text-muted-foreground mt-1">Currently in the field</p>
+            <div className="text-3xl font-bold text-foreground">{stats.tractorsAvailable}</div>
+            <p className="text-xs text-muted-foreground mt-1">Ready for booking</p>
           </CardContent>
         </Card>
       </div>
@@ -103,19 +136,17 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {summary.regionCoverage?.map((region) => (
+              {stats.regionCoverage?.map((region) => (
                 <div key={region.region} className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{region.region}</span>
+                  <span className="text-sm font-medium w-20 shrink-0">{region.region}</span>
                   <div className="flex items-center gap-4 flex-1 ml-4">
                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary" 
-                        style={{ width: `${(region.farmerCount / summary.totalFarmers) * 100}%` }}
+                      <div
+                        className="h-full bg-primary transition-all duration-700"
+                        style={{ width: stats.totalFarmers > 0 ? `${(region.farmerCount / stats.totalFarmers) * 100}%` : "0%" }}
                       />
                     </div>
-                    <span className="text-sm text-muted-foreground w-12 text-right">
-                      {region.farmerCount}
-                    </span>
+                    <span className="text-sm text-muted-foreground w-12 text-right">{region.farmerCount}</span>
                   </div>
                 </div>
               ))}
@@ -130,10 +161,10 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {summary.topCrops?.map((crop) => (
+              {stats.topCrops?.map((crop) => (
                 <div key={crop.crop} className="flex items-center justify-between border-b pb-2 last:border-0">
                   <span className="text-sm font-medium capitalize">{crop.crop}</span>
-                  <span className="text-sm font-bold text-primary">{crop?.count?.toLocaleString() ?? "0"} queries</span>
+                  <span className="text-sm font-bold text-primary">{crop.count.toLocaleString()} queries</span>
                 </div>
               ))}
             </div>

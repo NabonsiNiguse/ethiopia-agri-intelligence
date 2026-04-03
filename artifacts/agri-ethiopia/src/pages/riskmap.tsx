@@ -26,11 +26,11 @@ interface RiskRegion {
   lng: number;
   riskLevel: "High" | "Medium" | "Low";
   farmerCount: number;
-  scores: {
-    disease: number;
-    weather: number;
-    market: number;
-  };
+  scores: { disease: number; weather: number; market: number };
+  // API may also return flat fields
+  diseaseRisk?: number;
+  weatherRisk?: number;
+  marketRisk?: number;
   alerts: string[];
   activeCrops: string[];
 }
@@ -39,89 +39,85 @@ export default function RiskMap() {
   const [layers, setLayers] = useState({ disease: true, weather: true, market: true });
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
 
-  const { data: regions } = useQuery<RiskRegion[]>({
+  const { data: regionsData } = useQuery<{ regions: RiskRegion[]; summary: any }>({
     queryKey: ["riskmap-regions"],
     queryFn: async () => {
-      try {
-        const res = await fetch("/api/riskmap/regions");
-        if (!res.ok) throw new Error("Failed");
-        return res.json();
-      } catch {
-        return [
-          { id: "1", name: "Oromia", lat: 8.5, lng: 39.0, riskLevel: "Medium", farmerCount: 45000, scores: { disease: 45, weather: 65, market: 30 }, alerts: ["Irregular rainfall expected", "Minor pest reports in West"], activeCrops: ["Coffee", "Wheat", "Maize"] },
-          { id: "2", name: "Amhara", lat: 11.5, lng: 38.5, riskLevel: "High", farmerCount: 32000, scores: { disease: 85, weather: 40, market: 70 }, alerts: ["Wheat rust outbreak detected", "Fertilizer shortage in local markets"], activeCrops: ["Teff", "Sorghum", "Wheat"] },
-          { id: "3", name: "SNNPR", lat: 6.5, lng: 36.5, riskLevel: "Low", farmerCount: 28000, scores: { disease: 20, weather: 15, market: 25 }, alerts: [], activeCrops: ["Coffee", "Enset", "Fruits"] },
-          { id: "4", name: "Tigray", lat: 14.0, lng: 39.0, riskLevel: "High", farmerCount: 15000, scores: { disease: 30, weather: 80, market: 90 }, alerts: ["Severe drought warning", "Market access limited"], activeCrops: ["Teff", "Sesame"] },
-          { id: "5", name: "Afar", lat: 11.8, lng: 41.0, riskLevel: "Medium", farmerCount: 8000, scores: { disease: 10, weather: 75, market: 40 }, alerts: ["Heatwave warning"], activeCrops: ["Cotton", "Maize"] }
-        ];
-      }
+      const res = await fetch("/api/riskmap/regions");
+      if (!res.ok) throw new Error("Failed");
+      return res.json();
+    },
+    // fallback static data if backend is down
+    placeholderData: {
+      regions: [
+        { id: "1", name: "Oromia",            lat: 8.5,  lng: 39.5, riskLevel: "Medium", farmerCount: 45000, scores: { disease: 45, weather: 35, market: 52 }, alerts: ["Coffee Berry Disease detected in Jimma zone", "Teff blast reported in West Wellega"], activeCrops: ["Coffee", "Maize", "Teff"] },
+        { id: "2", name: "Amhara",            lat: 11.5, lng: 38.0, riskLevel: "High",   farmerCount: 32000, scores: { disease: 72, weather: 28, market: 65 }, alerts: ["Wheat rust early warning in South Gondar", "Stem borer in maize - Awi zone"], activeCrops: ["Teff", "Wheat", "Barley"] },
+        { id: "3", name: "SNNPR",             lat: 6.5,  lng: 37.5, riskLevel: "Low",    farmerCount: 28000, scores: { disease: 18, weather: 22, market: 30 }, alerts: ["Coffee leaf rust in Sidama"], activeCrops: ["Coffee", "Enset", "Sesame"] },
+        { id: "4", name: "Tigray",            lat: 14.0, lng: 38.5, riskLevel: "High",   farmerCount: 15000, scores: { disease: 40, weather: 68, market: 80 }, alerts: ["Locust activity along Eastern border", "Teff smut reported in Central Tigray"], activeCrops: ["Teff", "Sorghum", "Barley"] },
+        { id: "5", name: "Afar",              lat: 12.0, lng: 41.5, riskLevel: "High",   farmerCount: 8000,  scores: { disease: 25, weather: 85, market: 60 }, alerts: ["Severe drought stress", "Fall armyworm in sorghum"], activeCrops: ["Sorghum", "Sesame"] },
+        { id: "6", name: "Somali",            lat: 7.5,  lng: 45.0, riskLevel: "High",   farmerCount: 6000,  scores: { disease: 20, weather: 80, market: 55 }, alerts: ["Extreme drought conditions"], activeCrops: ["Sorghum", "Sesame"] },
+        { id: "7", name: "Benishangul-Gumuz", lat: 10.5, lng: 35.5, riskLevel: "Low",    farmerCount: 5000,  scores: { disease: 30, weather: 20, market: 40 }, alerts: ["Maize streak virus reports increasing"], activeCrops: ["Sesame", "Maize", "Sorghum"] },
+        { id: "8", name: "Gambela",           lat: 8.0,  lng: 34.5, riskLevel: "Medium", farmerCount: 4000,  scores: { disease: 35, weather: 30, market: 45 }, alerts: ["Flooding damage to standing crops"], activeCrops: ["Maize", "Sorghum", "Rice"] },
+      ],
+      summary: {}
     }
   });
 
-  const { data: alerts } = useQuery({
+  const regions = regionsData?.regions ?? [];
+
+  const { data: alertsData } = useQuery({
     queryKey: ["riskmap-alerts"],
     queryFn: async () => {
-      try {
-        const res = await fetch("/api/riskmap/alerts");
-        if (!res.ok) throw new Error("Failed");
-        return res.json();
-      } catch {
-        return [
-          { region: "Amhara", text: "Severe wheat rust outbreak spreading rapidly in North Gondar.", severity: "High" },
-          { region: "Tigray", text: "Critical soil moisture deficit affecting early planting.", severity: "High" },
-          { region: "Oromia", text: "Delay in input distribution affecting maize sowing schedules.", severity: "Medium" }
-        ];
-      }
+      const res = await fetch("/api/riskmap/alerts");
+      if (!res.ok) throw new Error("Failed");
+      return res.json();
+    },
+    placeholderData: {
+      alerts: [
+        { region: "Amhara", alert: "Severe wheat rust outbreak spreading rapidly in North Gondar.", severity: "High" },
+        { region: "Tigray", alert: "Critical soil moisture deficit affecting early planting.", severity: "High" },
+        { region: "Afar",   alert: "Extreme drought — livestock and crop losses reported.", severity: "High" },
+        { region: "Oromia", alert: "Delay in input distribution affecting maize sowing schedules.", severity: "Medium" },
+      ]
     }
   });
+
+  const alerts = alertsData?.alerts ?? [];
 
   const { data: regionDetail } = useQuery({
     queryKey: ["riskmap-region", selectedRegion],
     enabled: !!selectedRegion,
     queryFn: async () => {
-      try {
-        const res = await fetch(`/api/riskmap/region/${selectedRegion}`);
-        if (!res.ok) throw new Error("Failed");
-        return res.json();
-      } catch {
-        const base = regions?.find(r => r.name === selectedRegion);
-        if (!base) return null;
-        return {
-          ...base,
-          recommendations: [
-            "Deploy emergency fungicide spraying teams to affected woredas.",
-            "Issue SMS alerts advising farmers to delay fertilizer application until rains stabilize.",
-            "Coordinate with local cooperatives to distribute rust-resistant seed varieties."
-          ],
-          topFarmers: [
-            { name: "Kebede T.", crop: "Wheat", status: "Safe" },
-            { name: "Alemayehu G.", crop: "Teff", status: "At Risk" },
-            { name: "Chaltu D.", crop: "Maize", status: "Safe" }
-          ],
-          marketPrices: [
-            { commodity: "Wheat", price: 4200, trend: "up" },
-            { commodity: "Teff", price: 5600, trend: "stable" }
-          ]
-        };
-      }
-    }
+      const res = await fetch(`/api/riskmap/region/${encodeURIComponent(selectedRegion!)}`);
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      // normalize riskScores -> scores for the template
+      return {
+        ...data,
+        scores: data.riskScores ?? data.scores ?? { disease: 0, weather: 0, market: 0 },
+        marketPrices: (data.marketPrices ?? []).map((p: any) => ({
+          commodity: p.commodity,
+          price: p.pricePerKg ?? p.price,
+          trend: (p.changePercent ?? 0) > 0 ? "up" : (p.changePercent ?? 0) < 0 ? "down" : "stable",
+        })),
+      };
+    },
   });
 
   const calculatedRegions = useMemo(() => {
     if (!regions) return [];
-    return regions.map(r => {
+    return regions.map((r, idx) => {
       const activeScores = [];
-      if (layers.disease) activeScores.push(r.scores.disease);
-      if (layers.weather) activeScores.push(r.scores.weather);
-      if (layers.market) activeScores.push(r.scores.market);
-      
+      if (layers.disease) activeScores.push(r.scores?.disease ?? r.diseaseRisk ?? 0);
+      if (layers.weather) activeScores.push(r.scores?.weather ?? r.weatherRisk ?? 0);
+      if (layers.market) activeScores.push(r.scores?.market ?? r.marketRisk ?? 0);
+
       const avgScore = activeScores.length > 0 ? activeScores.reduce((a, b) => a + b, 0) / activeScores.length : 0;
-      
+
       let calcLevel = "Low";
       if (avgScore >= 65) calcLevel = "High";
-      else if (avgScore >= 40) calcLevel = "Medium";
+      else if (avgScore >= 35) calcLevel = "Medium";
 
-      return { ...r, calculatedLevel: calcLevel, calculatedScore: Math.round(avgScore) };
+      return { ...r, id: r.id ?? String(idx), calculatedLevel: calcLevel, calculatedScore: Math.round(avgScore) };
     });
   }, [regions, layers]);
 
@@ -188,7 +184,7 @@ export default function RiskMap() {
                       <span className="font-bold text-sm">{alert.region}</span>
                       <Badge variant="outline" className={`text-[10px] ${alert.severity === 'High' ? 'text-destructive border-destructive' : 'text-amber-600 border-amber-500'}`}>{alert.severity}</Badge>
                     </div>
-                    <p className="text-xs text-foreground/80 leading-snug">{alert.text}</p>
+                    <p className="text-xs text-foreground/80 leading-snug">{alert.alert ?? alert.text}</p>
                   </CardContent>
                 </Card>
               ))}

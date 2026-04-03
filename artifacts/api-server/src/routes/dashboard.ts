@@ -5,53 +5,58 @@ import { eq, gte, desc, sql } from "drizzle-orm";
 const router: IRouter = Router();
 
 router.get("/dashboard/summary", async (req, res): Promise<void> => {
-  const [
-    farmersResult,
-    detectionsResult,
-    marketResult,
-    insuranceResult,
-    tractorResult,
-    forumResult,
-    batchResult,
-    advisoryResult,
-  ] = await Promise.all([
-    db.select({ count: sql<number>`count(*)` }).from(farmersTable),
-    db.select({ count: sql<number>`count(*)` }).from(diseaseDetectionsTable),
-    db.select({ count: sql<number>`count(*)` }).from(marketPricesTable),
-    db.select({ count: sql<number>`count(*)` }).from(insurancePoliciesTable).where(eq(insurancePoliciesTable.status, "active")),
-    db.select({ count: sql<number>`count(*)` }).from(tractorsTable).where(eq(tractorsTable.available, true)),
-    db.select({ count: sql<number>`count(*)` }).from(forumPostsTable),
-    db.select({ count: sql<number>`count(*)` }).from(cropBatchesTable),
-    db.select({ count: sql<number>`count(*)` }).from(advisoryMessagesTable),
-  ]);
+  try {
+    const [
+      farmersResult, detectionsResult, marketResult, insuranceResult,
+      tractorResult, forumResult, batchResult, advisoryResult,
+    ] = await Promise.all([
+      db.select({ count: sql<number>`count(*)` }).from(farmersTable),
+      db.select({ count: sql<number>`count(*)` }).from(diseaseDetectionsTable),
+      db.select({ count: sql<number>`count(*)` }).from(marketPricesTable),
+      db.select({ count: sql<number>`count(*)` }).from(insurancePoliciesTable).where(eq(insurancePoliciesTable.status, "active")),
+      db.select({ count: sql<number>`count(*)` }).from(tractorsTable).where(eq(tractorsTable.available, true)),
+      db.select({ count: sql<number>`count(*)` }).from(forumPostsTable),
+      db.select({ count: sql<number>`count(*)` }).from(cropBatchesTable),
+      db.select({ count: sql<number>`count(*)` }).from(advisoryMessagesTable),
+    ]);
 
-  const totalFarmers = Number(farmersResult[0]?.count ?? 0);
+    const totalFarmers = Number(farmersResult[0]?.count ?? 0);
 
-  res.json({
-    totalFarmers,
-    activeFarmers: Math.round(totalFarmers * 0.78),
-    totalAdvisories: Number(advisoryResult[0]?.count ?? 0),
-    diseaseDetectionsToday: Math.round(Number(detectionsResult[0]?.count ?? 0) * 0.08) + 3,
-    activeInsurancePolicies: Number(insuranceResult[0]?.count ?? 0),
-    marketPricesUpdatedToday: Math.round(Number(marketResult[0]?.count ?? 0) * 0.1) + 12,
-    tractorsAvailable: Number(tractorResult[0]?.count ?? 0),
-    forumPostsThisWeek: Math.round(Number(forumResult[0]?.count ?? 0) * 0.2) + 5,
-    cropBatchesTracked: Number(batchResult[0]?.count ?? 0),
-    topCrops: [
-      { crop: "Coffee", count: Math.round(totalFarmers * 0.35) },
-      { crop: "Teff", count: Math.round(totalFarmers * 0.28) },
-      { crop: "Sesame", count: Math.round(totalFarmers * 0.18) },
-      { crop: "Wheat", count: Math.round(totalFarmers * 0.12) },
-      { crop: "Maize", count: Math.round(totalFarmers * 0.07) },
-    ],
-    regionCoverage: [
-      { region: "Oromia", farmerCount: Math.round(totalFarmers * 0.42) },
-      { region: "Amhara", farmerCount: Math.round(totalFarmers * 0.29) },
-      { region: "SNNPR", farmerCount: Math.round(totalFarmers * 0.16) },
-      { region: "Tigray", farmerCount: Math.round(totalFarmers * 0.08) },
-      { region: "Others", farmerCount: Math.round(totalFarmers * 0.05) },
-    ],
-  });
+    res.json({
+      totalFarmers,
+      activeFarmers: Math.round(totalFarmers * 0.78),
+      totalAdvisories: Number(advisoryResult[0]?.count ?? 0),
+      diseaseDetectionsToday: Math.round(Number(detectionsResult[0]?.count ?? 0) * 0.08) + 3,
+      activeInsurancePolicies: Number(insuranceResult[0]?.count ?? 0),
+      marketPricesUpdatedToday: Math.round(Number(marketResult[0]?.count ?? 0) * 0.1) + 12,
+      tractorsAvailable: Number(tractorResult[0]?.count ?? 0),
+      forumPostsThisWeek: Math.round(Number(forumResult[0]?.count ?? 0) * 0.2) + 5,
+      cropBatchesTracked: Number(batchResult[0]?.count ?? 0),
+      topCrops: [
+        { crop: "Coffee", count: Math.round(totalFarmers * 0.35) },
+        { crop: "Teff", count: Math.round(totalFarmers * 0.28) },
+        { crop: "Sesame", count: Math.round(totalFarmers * 0.18) },
+        { crop: "Wheat", count: Math.round(totalFarmers * 0.12) },
+        { crop: "Maize", count: Math.round(totalFarmers * 0.07) },
+      ],
+      regionCoverage: [
+        { region: "Oromia", farmerCount: Math.round(totalFarmers * 0.42) },
+        { region: "Amhara", farmerCount: Math.round(totalFarmers * 0.29) },
+        { region: "SNNPR", farmerCount: Math.round(totalFarmers * 0.16) },
+        { region: "Tigray", farmerCount: Math.round(totalFarmers * 0.08) },
+        { region: "Others", farmerCount: Math.round(totalFarmers * 0.05) },
+      ],
+    });
+  } catch {
+    // DB unavailable — return zeros so dashboard still renders
+    res.json({
+      totalFarmers: 0, activeFarmers: 0, totalAdvisories: 0,
+      diseaseDetectionsToday: 0, activeInsurancePolicies: 0,
+      marketPricesUpdatedToday: 0, tractorsAvailable: 0,
+      forumPostsThisWeek: 0, cropBatchesTracked: 0,
+      topCrops: [], regionCoverage: [],
+    });
+  }
 });
 
 router.get("/dashboard/regional-stats", async (req, res): Promise<void> => {
